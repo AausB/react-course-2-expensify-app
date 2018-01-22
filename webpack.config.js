@@ -65,7 +65,7 @@ module.exports = (env) => {
     
     devServer: {
       contentBase: path.join(__dirname, 'public'),
-      historyApiFallback: true
+      historyApiFallback: true // handle URLs by the history object not by requesting the server
     }
   };
 };
