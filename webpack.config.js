@@ -63,9 +63,9 @@ module.exports = (env) => {
       }]
     },
 
-    // create extra css file
+    
     plugins: [
-      CSSExtract,
+      CSSExtract, // create extra css file
       new webpack.DefinePlugin({ // JSON.stringify() wraps variable content in quotes ""
         'process.env.FIREBASE_API_KEY': JSON.stringify(process.env.FIREBASE_API_KEY),
         'process.env.FIREBASE_AUTH_DOMAIN': JSON.stringify(process.env.FIREBASE_AUTH_DOMAIN),
