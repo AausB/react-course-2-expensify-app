@@ -13,6 +13,8 @@ import 'normalize.css/normalize.css';
 import './styles/styles.scss';
 import 'react-dates/lib/css/_datepicker.css';
 
+import './firebase/firebase';
+
 const store = configureStore();
 
 // console.log('Test: devtools console');
@@ -22,5 +24,7 @@ const jsx = (
     <AppRouter />
   </Provider>
 );
+
+console.log('NODE_ENV:', process.env.NODE_ENV);
 
 ReactDOM.render(jsx, document.getElementById('app'));

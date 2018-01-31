@@ -1,12 +1,12 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import ExpenseForm from './ExpenseForm';
-import { addExpense } from '../actions/expenses';
+import { startAddExpense } from '../actions/expenses';
 
 // named export for testing without connect()
 export class AddExpensePage extends React.Component {
   onSubmit = (expense) => {
-    this.props.addExpense(expense); // to be tested
+    this.props.startAddExpense(expense); // to be tested
     this.props.history.push('/'); // to be tested
   };
 
@@ -28,7 +28,7 @@ export class AddExpensePage extends React.Component {
 // you can use the dispatch funtion as a property
 // abstract the dispathc function away from the component itself
 const mapDispatchToProps = (dispatch) => ({
-    addExpense: (expense) => dispatch(addExpense(expense))
+    startAddExpense: (expense) => dispatch(startAddExpense(expense))
 });
 
 export default connect(undefined, mapDispatchToProps)(AddExpensePage);

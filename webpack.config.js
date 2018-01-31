@@ -1,8 +1,19 @@
 const path = require('path');
+const webpack = require('webpack');
 
 // create extra css file
 // see: https://www.npmjs.com/package/extract-text-webpack-plugin
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
+
+// get the environment variable NODE_ENV
+// heroku sets NODE_ENV to "production" by default
+process.env.NODE_ENV = process.env.NODE_ENV || 'development';
+
+if (process.env.NODE_ENV === 'test') {
+  require('dotenv').config({ path: '.env.test' });
+} else if (process.env.NODE_ENV === 'development') {
+  require('dotenv').config({ path: '.env.development' });
+}
 
 // see: https://webpack.js.org/configuration/configuration-types/#exporting-a-function
 module.exports = (env) => {
@@ -54,7 +65,15 @@ module.exports = (env) => {
 
     // create extra css file
     plugins: [
-      CSSExtract
+      CSSExtract,
+      new webpack.DefinePlugin({ // JSON.stringify() wraps variable content in quotes ""
+        'process.env.FIREBASE_API_KEY': JSON.stringify(process.env.FIREBASE_API_KEY),
+        'process.env.FIREBASE_AUTH_DOMAIN': JSON.stringify(process.env.FIREBASE_AUTH_DOMAIN),
+        'process.env.FIREBASE_DATABASE': JSON.stringify(process.env.FIREBASE_DATABASE),
+        'process.env.FIREBASE_PROJECT_ID': JSON.stringify(process.env.FIREBASE_PROJECT_ID),
+        'process.env.FIREBASE_STORAGE_BUCKET': JSON.stringify(process.env.FIREBASE_STORAGE_BUCKET),
+        'process.env.FIREBASE_SENDER_ID': JSON.stringify(process.env.FIREBASE_SENDER_ID)
+      })
     ],
 
     // see: https://webpack.js.org/configuration/devtool/
