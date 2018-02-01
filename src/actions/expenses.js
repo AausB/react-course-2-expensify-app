@@ -83,6 +83,21 @@ export const removeExpense = ({ id } = {}) => ({
   id
 });
 
+// START REMOVE_EXPENSE
+// removes a single expense from database and dispatches START_REMOVE
+// ({id} = {}): default is an empty object, id is the object destructured value id
+export const startRemoveExpense = ({id} = {}) => {
+  return (dispatch) => {
+    return database.ref('expenses').child(id).remove()
+    .then(() => {
+      dispatch(removeExpense({id}));
+    })
+    .catch(function(error) {
+      console.log("Remove failed: " + error.message)
+    });
+  };
+};
+
 // EDIT_EXPENSE
 export const editExpense = (id, updates) => ({
   type: 'EDIT_EXPENSE',

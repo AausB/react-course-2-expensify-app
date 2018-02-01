@@ -1,7 +1,16 @@
 import consfigureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 
-import {startAddExpense, addExpense, editExpense, removeExpense, setExpenses, startSetExpenses} from '../../actions/expenses';
+import {
+  startAddExpense,
+  addExpense,
+  editExpense,
+  removeExpense,
+  startRemoveExpense,
+  setExpenses,
+  startSetExpenses
+} from '../../actions/expenses';
+
 import expenses from '../fixtures/expenses';
 import database from '../../firebase/firebase';
 
@@ -27,6 +36,30 @@ test('should setup remove expense action object', () => {
     type: 'REMOVE_EXPENSE',
     id: '123abc'
   });
+});
+
+test('should remove expense from database (firebase)', (done) => {
+  const store = createMockStore({});
+  const id = expenses[1].id;
+
+  store.dispatch(startRemoveExpense({id})).then(() => {
+    // which actions are dispatched?
+    const actions = store.getActions();
+
+    expect(actions.length).toBe(1);
+    expect(actions[0]).toEqual({
+      type: 'REMOVE_EXPENSE',
+      id
+    });
+
+    // check if you can read the deleted expense
+    // return the promise to get rid of the nested then
+    return database.ref(`expenses/${id}`).once('value');
+  }).then((snapshot) => {
+    expect(snapshot.val()).toBeFalsy();
+    done();
+  });
+
 });
 
 test('should setup edit expense action object', () => {
@@ -148,6 +181,7 @@ test('should fetch the expenses from database (firebase)', (done) => {
   const store = createMockStore({});
 
   store.dispatch(startSetExpenses()).then(() => {
+    // which actions are dispatched?
     const actions = store.getActions();
 
     expect(actions.length).toBe(1);
