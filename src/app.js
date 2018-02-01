@@ -6,7 +6,7 @@ import moment from 'moment';
 
 import AppRouter from './routers/AppRouter';
 import configureStore from './store/configureStore';
-import { addExpense } from './actions/expenses';
+import { startSetExpenses } from './actions/expenses';
 import { setTextFilter } from './actions/filters';
 import getVisibleExpenses from './selectors/expenses';
 import 'normalize.css/normalize.css';
@@ -27,4 +27,10 @@ const jsx = (
 
 console.log('NODE_ENV:', process.env.NODE_ENV);
 
-ReactDOM.render(jsx, document.getElementById('app'));
+// show to screen until expenses are loaded from database
+ReactDOM.render(<p>Loading...</p>, document.getElementById('app'));
+
+store.dispatch(startSetExpenses()).then(() => {
+  ReactDOM.render(jsx, document.getElementById('app'));
+});
+

@@ -89,3 +89,37 @@ export const editExpense = (id, updates) => ({
   id,
   updates
 });
+
+// SET_EXPENSES
+// set the expenses initially
+export const setExpenses = (expenses) => ({
+  type: 'SET_EXPENSES',
+  expenses
+});
+
+// start SET_EXPENSES
+// async call to database to fetch all expenses
+export const startSetExpenses = () => {
+  return (dispatch) => {
+  // 1. Fetch all expense data once -> see example in firebase.js
+    // return database.ref to use .then() in app.js
+    return database.ref('expenses')
+      .once('value')
+      .then((snapshot) => {
+        const expenses = [];
+
+  // 2. Parse data into an array
+        snapshot.forEach((childSnapshot) => {
+          expenses.push({
+            id: childSnapshot.key,
+            ...childSnapshot.val()
+          });
+        });
+  // 3. Dispatch SET_EXPENSES
+        dispatch(setExpenses(expenses));
+      })
+      .catch((error) => {
+        console.log('db fetch failed:', error)
+      });
+  };
+};

@@ -1,11 +1,24 @@
 import consfigureStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 
-import {startAddExpense, addExpense, editExpense, removeExpense} from '../../actions/expenses';
+import {startAddExpense, addExpense, editExpense, removeExpense, setExpenses, startSetExpenses} from '../../actions/expenses';
 import expenses from '../fixtures/expenses';
 import database from '../../firebase/firebase';
 
 const createMockStore = consfigureStore([thunk]);
+
+beforeEach((done) => {
+  const expensesData = {};
+
+  // builds from the fixtures expenses array an expensesData object
+  expenses.forEach(({id, description, note, amount, createdAt}) => {
+    expensesData[id] = {description, note, amount, createdAt};
+  });
+
+  // write data to firebase
+  // beforeEach waits until "done()"
+  database.ref('expenses').set(expensesData).then(() => done());
+});
 
 test('should setup remove expense action object', () => {
   const action = removeExpense({id: '123abc'});
@@ -121,22 +134,27 @@ test('should add expense with defaults to database and store', (done) => {
   });
 });
 
-// SKIP
-test.skip('should setup add expense action object with DEFAULT values', () => {
-  const expenseDefaults =   {
-    description: '',
-    note: '',
-    amount: 0,
-    createdAt: 0
-  };
-
-  const action = addExpense();
+test('should setup SET_EXPENSES action object with data', () => {
+  // use the expenses array from fixtures/expenses.js
+  const action = setExpenses(expenses);
 
   expect(action).toEqual({
-    type: 'ADD_EXPENSE',
-    expense: {
-      ...expenseDefaults,
-      id: expect.any(String)
-    }
+    type: 'SET_EXPENSES',
+    expenses
+  });
+});
+
+test('should fetch the expenses from database (firebase)', (done) => {
+  const store = createMockStore({});
+
+  store.dispatch(startSetExpenses()).then(() => {
+    const actions = store.getActions();
+
+    expect(actions.length).toBe(1);
+    expect(actions[0]).toEqual({
+      type: 'SET_EXPENSES',
+      expenses // all expenses from fixtures should be in the database (see beforeEach() above)
+    });
+    done();
   });
 });
