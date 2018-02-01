@@ -105,6 +105,17 @@ export const editExpense = (id, updates) => ({
   updates
 });
 
+// start EDIT_EXPENSE
+export const startEditExpense = (id, updates) => {
+  return (dispatch) => {
+    return database.ref(`expenses/${id}`)
+      .update(updates)
+      .then(() => {
+        dispatch(editExpense(id, updates));
+      }).catch((error) => console.log('startEditExpense:', error));
+  }
+};
+
 // SET_EXPENSES
 // set the expenses initially
 export const setExpenses = (expenses) => ({
@@ -117,7 +128,7 @@ export const setExpenses = (expenses) => ({
 export const startSetExpenses = () => {
   return (dispatch) => {
   // 1. Fetch all expense data once -> see example in firebase.js
-    // return database.ref to use .then() in app.js
+    // return database.ref to use .then() in app.js bzw in the tests
     return database.ref('expenses')
       .once('value')
       .then((snapshot) => {

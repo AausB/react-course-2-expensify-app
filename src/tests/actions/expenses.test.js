@@ -5,6 +5,7 @@ import {
   startAddExpense,
   addExpense,
   editExpense,
+  startEditExpense,
   removeExpense,
   startRemoveExpense,
   setExpenses,
@@ -29,6 +30,9 @@ beforeEach((done) => {
   database.ref('expenses').set(expensesData).then(() => done());
 });
 
+//
+// REMOVE EXPENSE
+//
 test('should setup remove expense action object', () => {
   const action = removeExpense({id: '123abc'});
 
@@ -62,6 +66,9 @@ test('should remove expense from database (firebase)', (done) => {
 
 });
 
+//
+// EDIT EXPENSE
+//
 test('should setup edit expense action object', () => {
   const updates = {
     description: 'test description',
@@ -84,6 +91,39 @@ test('should setup edit expense action object', () => {
   });
 });
 
+test('should edit/update expense from database (firebase)', (done) => {
+  const store = createMockStore({});
+  
+  const id = expenses[0].id;
+
+  const updates = {
+    description: 'test description',
+    amount: 123456,
+    createdAt: 1000,
+    note: 'test note'
+  };
+
+  store.dispatch(startEditExpense(id, updates)).then(() => {
+    // which actions are dispatched?
+    const actions = store.getActions();
+
+    expect(actions.length).toBe(1);
+    expect(actions[0]).toEqual({
+      type: 'EDIT_EXPENSE',
+      id,
+      updates
+    });
+
+  return database.ref(`expenses/${id}`).once('value');
+  }).then((snapshot) => {
+    expect(snapshot.val()).toEqual(updates);
+    done();
+  });
+});
+
+//
+// ADD EXPENSE
+//
 test('should setup add expense action object with PROVIDED values', () => {
   const action = addExpense(expenses[2]);
 
@@ -167,6 +207,9 @@ test('should add expense with defaults to database and store', (done) => {
   });
 });
 
+//
+// SET EXPENSES
+//
 test('should setup SET_EXPENSES action object with data', () => {
   // use the expenses array from fixtures/expenses.js
   const action = setExpenses(expenses);
