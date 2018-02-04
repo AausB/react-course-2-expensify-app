@@ -47,7 +47,9 @@ export const addExpense = (expense) => ({
 // startAddExpense is the function that first writes to database and then to the store
 //   returns a function
 export const startAddExpense = (expenseData = {}) => {
-  return (dispatch) => {
+  return (dispatch, getState) => {
+
+    const uid = getState().auth.uid;
     
     // initialize data
     const {
@@ -61,7 +63,7 @@ export const startAddExpense = (expenseData = {}) => {
 
     // add expense to database
     // return database... returns the promise chain to chain it with "then" in expenses.test.js
-    return database.ref('expenses')
+    return database.ref(`users/${uid}/expenses`)
       .push(expense)
       .then((ref) => {
         // add expense to store
@@ -87,8 +89,10 @@ export const removeExpense = ({ id } = {}) => ({
 // removes a single expense from database and dispatches START_REMOVE
 // ({id} = {}): default is an empty object, id is the object destructured value id
 export const startRemoveExpense = ({id} = {}) => {
-  return (dispatch) => {
-    return database.ref('expenses').child(id).remove()
+  return (dispatch, getState) => {
+    const uid = getState().auth.uid;
+
+    return database.ref(`users/${uid}/expenses`).child(id).remove()
     .then(() => {
       dispatch(removeExpense({id}));
     })
@@ -107,8 +111,10 @@ export const editExpense = (id, updates) => ({
 
 // start EDIT_EXPENSE
 export const startEditExpense = (id, updates) => {
-  return (dispatch) => {
-    return database.ref(`expenses/${id}`)
+  return (dispatch, getState) => {
+    const uid = getState().auth.uid;
+
+    return database.ref(`users/${uid}/expenses/${id}`)
       .update(updates)
       .then(() => {
         dispatch(editExpense(id, updates));
@@ -126,10 +132,12 @@ export const setExpenses = (expenses) => ({
 // start SET_EXPENSES
 // async call to database to fetch all expenses
 export const startSetExpenses = () => {
-  return (dispatch) => {
+  return (dispatch, getState) => {
+    const uid = getState().auth.uid;
+    
   // 1. Fetch all expense data once -> see example in firebase.js
     // return database.ref to use .then() in app.js bzw in the tests
-    return database.ref('expenses')
+    return database.ref(`users/${uid}/expenses`)
       .once('value')
       .then((snapshot) => {
         const expenses = [];
