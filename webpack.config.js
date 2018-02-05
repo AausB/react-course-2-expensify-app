@@ -23,7 +23,9 @@ module.exports = (env) => {
   console.log('env:', env);
 
   return {
-    entry: './src/app.js',
+    // entry can be an array of entry points
+    // babel-polyfill: adding support to older browsers
+    entry: ['babel-polyfill', './src/app.js'],
     output: {
       path: path.join(__dirname, 'public', 'dist'),
       filename: 'bundle.js'

@@ -13,6 +13,7 @@ import getVisibleExpenses from './selectors/expenses';
 import 'normalize.css/normalize.css';
 import './styles/styles.scss';
 import 'react-dates/lib/css/_datepicker.css';
+import LoadingPage from './components/LoadingPage';
 
 import {firebase} from './firebase/firebase';
 
@@ -39,7 +40,7 @@ const renderApp = () => {
 console.log('NODE_ENV:', process.env.NODE_ENV);
 
 // show to screen until expenses are loaded from database
-ReactDOM.render(<p>Loading...</p>, document.getElementById('app'));
+ReactDOM.render(<LoadingPage />, document.getElementById('app'));
 
 // when the app loads AND when the auth state changes
 // listen to the login/logout event

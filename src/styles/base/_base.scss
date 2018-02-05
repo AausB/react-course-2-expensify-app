@@ -1,10 +1,17 @@
+* {
+  box-sizing: border-box;
+}
+
 html {
-  font-size: 62.5%;
+  // set base font-size to 10px: 100% * 10 / 16 = 62.5%
+  font-size: 62.5%; // 1rem = 10px
 }
 
 body {
+  color: $dark-grey;
   font-family: Helvetica, Arial, sans-serif;
   font-size: $m-size;
+  line-height: 1.6;
 }
 
 button {
